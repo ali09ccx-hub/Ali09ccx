@@ -1,0 +1,6 @@
+{
+  "name": "Virtual Phone",
+  "description": "A virtual cloud phone simulator with interactive apps, persistent storage, and custom navigation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
