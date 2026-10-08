@@ -26,14 +26,24 @@ jobs:
         with:
           flutter-version: '3.19.x'
 
-      - name: Install Dependencies
-        run: flutter pub get || true
-
-      - name: Build APK with Flutter
-        run: flutter build apk --release
+      - name: Build APK (Flutter or Gradle)
+        run: |
+          if [ -f "pubspec.yaml" ]; then
+            flutter pub get
+            flutter build apk --release
+          elif [ -f "flutter_export/pubspec.yaml" ]; then
+            cd flutter_export
+            flutter pub get
+            flutter build apk --release
+          elif [ -f "app/build.gradle.kts" ] || [ -f "app/build.gradle" ]; then
+            chmod +x gradlew || true
+            ./gradlew assembleDebug
+          fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: VirtualPhone-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: |
+            **/build/app/outputs/flutter-apk/*.apk
+            **/app/build/outputs/apk/debug/*.apk
