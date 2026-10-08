@@ -26,9 +26,15 @@ jobs:
         with:
           flutter-version: '3.19.x'
 
-      - name: Build APK with Flutter
+      - name: Repair Project and Build APK
         run: |
-          cd $(find . -name "pubspec.yaml" -exec dirname {} \; | head -n 1)
+          # 1. الدخول لمجلد المشروع
+          cd flutter_export
+          
+          # 2. إصلاح مجلد أندرويد وتهيئة المشروع تلقائياً
+          flutter create . --platforms=android --force
+          
+          # 3. تحميل المكتبات وبناء الـ APK
           flutter pub get
           flutter build apk --release
 
@@ -36,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: VirtualPhone-APK
-          path: '**/build/app/outputs/flutter-apk/*.apk'
+          path: 'flutter_export/build/app/outputs/flutter-apk/*.apk'
