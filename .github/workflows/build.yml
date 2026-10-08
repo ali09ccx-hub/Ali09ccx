@@ -26,19 +26,22 @@ jobs:
         with:
           flutter-version: '3.19.x'
 
-      - name: Build APK (Flutter or Gradle)
+      - name: Build APK with Flutter
         run: |
           if [ -f "pubspec.yaml" ]; then
-            flutter pub get
-            flutter build apk --release
+            PROJECT_DIR="."
           elif [ -f "flutter_export/pubspec.yaml" ]; then
-            cd flutter_export
-            flutter pub get
-            flutter build apk --release
-          elif [ -f "app/build.gradle.kts" ] || [ -f "app/build.gradle" ]; then
-            chmod +x gradlew || true
-            ./gradlew assembleDebug
+            PROJECT_DIR="flutter_export"
+          else
+            PROJECT_DIR=$(find . -name "pubspec.yaml" -exec dirname {} \; | head -n 1)
           fi
+
+          cd "$PROJECT_DIR"
+          
+          # إجبار Flutter على حل تعارض المكتبات بناءً على بيئة البناء
+          flutter pub add intl:^0.18.1 --no-api-docs || true
+          flutter pub get || true
+          flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -46,4 +49,4 @@ jobs:
           name: VirtualPhone-APK
           path: |
             **/build/app/outputs/flutter-apk/*.apk
-            **/app/build/outputs/apk/debug/*.apk
+            **/build/app/outputs/apk/release/*.apk
