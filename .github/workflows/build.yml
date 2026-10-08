@@ -1,45 +1,6 @@
-name: Build Android APK
-
-on:
-  push:
-    branches:
-      - main
-      - master
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.x'
-
       - name: Repair Project and Build APK
         run: |
-          # 1. الدخول لمجلد المشروع
           cd flutter_export
-          
-          # 2. إصلاح مجلد أندرويد وتهيئة المشروع تلقائياً
-          flutter create . --platforms=android --force
-          
-          # 3. تحميل المكتبات وبناء الـ APK
+          flutter create . --platforms=android
           flutter pub get
           flutter build apk --release
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: VirtualPhone-APK
-          path: 'flutter_export/build/app/outputs/flutter-apk/*.apk'
