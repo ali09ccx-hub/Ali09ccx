@@ -28,25 +28,12 @@ jobs:
 
       - name: Build APK with Flutter
         run: |
-          if [ -f "pubspec.yaml" ]; then
-            PROJECT_DIR="."
-          elif [ -f "flutter_export/pubspec.yaml" ]; then
-            PROJECT_DIR="flutter_export"
-          else
-            PROJECT_DIR=$(find . -name "pubspec.yaml" -exec dirname {} \; | head -n 1)
-          fi
-
-          cd "$PROJECT_DIR"
-          
-          # إجبار Flutter على حل تعارض المكتبات بناءً على بيئة البناء
-          flutter pub add intl:^0.18.1 --no-api-docs || true
-          flutter pub get || true
+          cd $(find . -name "pubspec.yaml" -exec dirname {} \; | head -n 1)
+          flutter pub get
           flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: VirtualPhone-APK
-          path: |
-            **/build/app/outputs/flutter-apk/*.apk
-            **/build/app/outputs/apk/release/*.apk
+          path: '**/build/app/outputs/flutter-apk/*.apk'
