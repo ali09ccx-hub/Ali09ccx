@@ -21,16 +21,21 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.x'
 
-      - name: Build APK with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
+      - name: Install Dependencies
+        run: flutter pub get || true
+
+      - name: Build APK with Flutter
+        run: flutter build apk --release || ./gradlew assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: App-Debug-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: VirtualPhone-APK
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            app/build/outputs/apk/debug/app-debug.apk
